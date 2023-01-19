@@ -127,9 +127,9 @@ pip install -r requirements.txt
 ## Pre-process
 
 Preprocess the data. 
-Crop the lengths of audio and video by the temporal label. (start, end)
-Then crop the video to the shape (96 96), by bounding box.
-Finally generate label scripts for training or evaluation.
+Crop the lengths of audio and video by the temporal label. (start, end) \
+Then crop the video to the shape (96 96), by bounding box. \
+Finally generate label scripts for training or evaluation. 
 
 **Preparation**
 
