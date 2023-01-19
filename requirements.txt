@@ -1,0 +1,9 @@
+torch>1.7.1+cu110
+torchaudio>0.7.2
+numpy
+librosa
+opencv-python
+Levenshtein
+
+sk-video
+soundfile

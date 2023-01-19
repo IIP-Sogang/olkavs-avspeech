@@ -1,0 +1,63 @@
+random_seed : 1234
+
+transcripts_path_train : "label.txt"
+transcripts_path_valid : "label.txt"
+save_dir : 'test'
+
+tokenize_unit : 'grapheme'
+architecture: 'audio_visual'
+loss_fn: 'hybrid'
+scheduler : 'noam'
+
+ctc_rate : 0.5
+learning_rate : 0.0001
+final_lr : 0.000001
+init_lr : 0.0
+gamma_lr : 0.7
+max_norm : 5
+warmup : 0
+epochs : 50
+batch_size : 6
+num_workers : 4
+resume_epoch : -1
+
+max_len : 200
+
+use_audio : True
+use_video : True
+raw_video : False
+
+audio_transform_method : 'raw'
+audio_sample_rate : 14400
+audio_n_channels : 2
+audio_n_mels : 80
+audio_frame_length : 40
+audio_frame_shift : 10
+audio_normalize : True
+
+video_n_channels : 3
+
+spec_augment : 0.
+freq_mask_para : None
+freq_mask_num : 0
+time_mask_num : 10
+
+noise_augment : 0.
+noise_path : ''
+
+#Encoder
+# front-end
+front_dim : 512
+# back-end
+encoder_n_layer : 12
+encoder_d_model: 256
+encoder_n_head: 8
+encoder_ff_dim: 2048
+encoder_dropout_p: 0.1
+
+#Decoder
+decoder_n_layer : 6
+decoder_d_model: 256
+decoder_n_head: 8
+decoder_ff_dim: 2048
+decoder_dropout_p: 0.1
