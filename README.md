@@ -128,7 +128,7 @@ pip install -r requirements.txt
 
 Preprocess the data. 
 Crop the lengths of audio and video by the temporal label. (start, end)
-Then crop the video to the shape (96$\times$96), by bounding box.
+Then crop the video to the shape (96 96), by bounding box.
 Finally generate label scripts for training or evaluation.
 
 **Preparation**
@@ -172,6 +172,7 @@ python inference.py -c {CONFIG_FILE_PATH}
 | `V-model`     |     34M*    |    None    | 36.53 | 49.97 | 51.71 |                     |
 | `F-model`     |     45M     |    None    | 55.00 | -     |     - |                     |
 | `All-model`   |     45M     |    None    | 44.86 | -     |     - |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
+
 (* Do not include [pre-trained visual front-end](#extract-lip-feature-optional) parameters.)
 
 
