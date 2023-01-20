@@ -11,10 +11,11 @@ This repository contains code scripts for training and evaluation of the OLKAVS 
 
 ## Datasets
 
-|<img src="./assets/sample_0.gif" width="512px" title="Sample_0"/>|<img src="./assets/sample_1.gif" width="512px" title="Sample_1"/>|
-| :--: | :--: |
-| **Sample #1 : {A,B,D,F,H}**<br>"그때 되게 한여름이어서 되게 뜨거웠거든요." | **Sample #2 : {A,C,E,G,I}**<br>"그래서 도서관엘 다시 들어갔어요 공부하기 위해서" |
-<!-- ![Sample_0](./assets/sample_0.gif) -->
+|<img src="./assets/sample_0.gif" width="512px" title="Sample_0"/>|
+| :--: |
+| **Sample #1 : {A,B,D,F,H}**<br>"그때 되게 한여름이어서 되게 뜨거웠거든요." |
+|<img src="./assets/sample_1.gif" width="512px" title="Sample_1"/>|
+|**Sample #2 : {A,C,E,G,I}**<br>"그래서 도서관엘 다시 들어갔어요 공부하기 위해서" |
 
 The OLKAVS contains below.
 
