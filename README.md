@@ -170,8 +170,8 @@ python inference.py -c {CONFIG_FILE_PATH}
 | `AV-model`    |     62M*    |    None    |  5.64 | 12.05 |  9.45 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
 | `A-model`     |     38M*    |    None    |  5.63 | 11.61 |  9.37 |                     |
 | `V-model`     |     34M*    |    None    | 36.53 | 49.97 | 51.71 |                     |
-| `F-model`     |     45M     |    None    | 55.00 | -     |     - |                     |
-| `All-model`   |     45M     |    None    | 44.86 | -     |     - |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
+| `F-model`     |     45M     |    None    | 55.00 | 71.60 | 72.64 |                     |
+| `All-model`   |     45M     |    None    | 44.86 | 60.08 | 60.67 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
 
 (* Do not include [pre-trained visual front-end](#extract-lip-feature-optional) parameters.)
 
