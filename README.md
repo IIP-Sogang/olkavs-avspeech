@@ -1,7 +1,7 @@
 # OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset
 ---
 
-This repository contains code scripts for training and evaluation of the OLKAVS dataset described in the paper [OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset](www.github.com).
+This repository contains code scripts for training and evaluation of the OLKAVS dataset described in the paper [OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset](https://arxiv.org/abs/2301.06375).
 
 
   * [Datasets](#datasets)
@@ -152,11 +152,8 @@ python preprocess.py --root_dir {ROOT_DIR} --src_dir {SOURCE_DIR} --label_dir {L
 ```
 
 ## Extract Lip Feature (Optional)
-To reduce the required memory resource, this script extracts lip features in advance.
-
-```
-Being in the works...
-```
+To reduce the required memory resource, we extracted lip features by pre-trained model from [here](https://github.com/afourast/deep_lip_reading).
+We used its visual front-end, the details of using pre-trained model are in the [paper](https://arxiv.org/abs/2301.06375).
 
 ## Evaluation
 ### Inference
