@@ -153,6 +153,7 @@ python preprocess.py --root_dir {ROOT_DIR} --src_dir {SOURCE_DIR} --label_dir {L
 
 ## Extract Lip Feature (Optional)
 To reduce the required memory resource, we extracted lip features by pre-trained model from [here](https://github.com/afourast/deep_lip_reading).
+
 We used its visual front-end, the details of using pre-trained model are in the [paper](https://arxiv.org/abs/2301.06375).
 
 ## Evaluation
