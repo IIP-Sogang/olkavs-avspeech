@@ -334,68 +334,79 @@ class SearchSequence:
 
         return scores, ctc_scores, att_scores
 
-
-def ctc_label_score(g, c, X, T, y_n, y_b, max_len=150, sos_id=None, eos_id=None, blank_id=None, last_score=None):
-    g = tuple(g)
-    h = tuple([*g, c])
-    if c == eos_id:
-        score = y_n[T][g] + y_b[T][g]
-        return np.log(score + EPSILON)
-    else:
-        y_n[1][h] = X[1][c] if g==(sos_id,) else 0
-        y_b[1][h] = 0
-        psi = y_n[1][h]
-        for t in range(2, T+1):
-            phi = y_b[t-1][g] if g[-1]==c else y_b[t-1][g]+y_n[t-1][g]
-            y_n[t][h] = (y_n[t-1][h] + phi)*X[t][c]
-            y_b[t][h] = (y_b[t-1][h] + y_n[t-1][h])*X[t][blank_id]
-            psi += phi*X[t][c]
-        #pdb.set_trace()
-        score = psi
-        return np.log(score + EPSILON)
-
-
 def ctc_label_scores(
-        g:str, vocab_size:int, X, T:int, 
-        y_n:Dict[str,float], y_b:Dict[str,float], max_len=150, 
-        sos_id=None, eos_id=None, blank_id=None, pad_id=None, 
-        last_score=None
-    ):
-    
+    g: str,
+    vocab_size: int,
+    X,
+    T: int,
+    y_n: Dict[int, Dict[str, float]],
+    y_b: Dict[int, Dict[str, float]],
+    max_len=150,
+    sos_id=None,
+    eos_id=None,
+    blank_id=None,
+    pad_id=None,
+    last_score=None,
+):
+    """
+    Compute the CTC label scores for each hypothesized character in a vectorized manner.
+
+    Args:
+        g: string representation of the previous labels in the sequence.
+        vocab_size: size of the vocabulary.
+        X: CTC probabilities matrix.
+        T: Number of time steps in the input sequence.
+        y_n: non-blank probability dictionary.
+        y_b: blank probability dictionary.
+        max_len: maximum length of the sequence (default 150).
+        sos_id: start of sequence label ID.
+        eos_id: end of sequence label ID.
+        blank_id: blank label ID.
+        pad_id: padding label ID.
+        last_score: last computed score (optional).
+
+    Returns:
+        The CTC label scores (log probabilities) for each hypothesized character.
+    """
     last_token = int(g.split()[-1])
-    vocabs:List[int] = [c for c in range(vocab_size) if c not in [sos_id, eos_id, pad_id]]
+    vocabs: List[int] = [
+        c for c in range(vocab_size) if c not in [sos_id, eos_id, pad_id]
+    ]
 
     yn = np.zeros(vocab_size)
-    yn[:] = X[1] if g==str(sos_id) else 0
+    yn[:] = X[1] if g == str(sos_id) else 0
     yb = np.zeros(vocab_size)
-    
-    y_n[1].update({join_key(g,c):yn[c].item() for c in vocabs})
-    y_b[1].update({join_key(g,c):0 for c in vocabs})
-    
+
+    valid_keys = [join_key(g, c) for c in vocabs]
+
+    for key in valid_keys:
+        y_n[1][key] = yn[int(key.split()[-1])]
+        y_b[1][key] = 0
+
     psi = yn.copy()
     phi = np.zeros(vocab_size)
-    
-    for t in range(2, T+1):
-        _yn = yn.copy()
-        _yb = yb.copy()
-        
-        try:
-            phi[:] = y_b[t-1][g]+y_n[t-1][g]
-        except:
-            pdb.set_trace()
-        phi[last_token] = y_b[t-1][g]
-        
-        yn = (_yn + phi)*X[t]
-        y_n[t].update({join_key(g,c):yn[c].item() for c in vocabs})
-        
-        yb = (_yb + _yn)*X[t][blank_id]
-        y_b[t].update({join_key(g,c):yb[c].item() for c in vocabs})
-        
-        psi += phi*X[t]
+
+    for t in range(2, T + 1):
+        yn_prev = yn.copy()
+        yb_prev = yb.copy()
+
+        phi[:] = y_b[t - 1][g] + y_n[t - 1][g]
+        phi[last_token] = y_b[t - 1][g]
+
+        yn = (yn_prev + phi) * X[t]
+        for key in valid_keys:
+            y_n[t][key] = yn[int(key.split()[-1])]
+
+        yb = (yb_prev + yn_prev) * X[t][blank_id]
+        for key in valid_keys:
+            y_b[t][key] = yb[int(key.split()[-1])]
+
+        psi += phi * X[t]
     psi[eos_id] = y_n[T][g] + y_b[T][g]
     scores = np.log(psi + EPSILON)
-    
+
     return scores
 
-def join_key(a:str, b:int):
+
+def join_key(a: str, b: int):
     return a + " " + str(b)

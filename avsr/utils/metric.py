@@ -65,7 +65,7 @@ class ErrorRate(object):
         """ Calculating character error rate """
         dist, length = self._get_distance(targets, y_hats, show=show, file_path=file_path)
         try:
-            return dist/length
+            return dist, length
         except:
             pdb.set_trace()
 

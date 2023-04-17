@@ -136,22 +136,22 @@ def infer(config, model, vocab, dataset, scores, device='cpu'):
                                      output_lengths=output_lengths, target_lengths=target_lengths, 
                                      file_path=file_indices))
         
-        ger, cer, wer, swer = errorRates
-        scores += torch.tensor([1, ger, cer, wer, swer])
+        ge, gl, ce, cl, we, wl, swe, swl = errorRates
+        scores += torch.tensor([ge, gl, ce, cl, we, wl, swe, swl])
         
         
         # show description
         show_description(
             it = int(scores[0].item()),
             total_it = len(dataloader),
-            ger = ger,
-            mean_ger = scores[1]/scores[0],
-            cer = cer,
-            mean_cer = scores[2]/scores[0],
-            wer = wer,
-            mean_wer = scores[3]/scores[0],
-            swer = swer,
-            mean_swer = scores[4]/scores[0],
+            ger = ge/gl,
+            mean_ger = scores[0]/scores[1],
+            cer = ce/cl,
+            mean_cer = scores[2]/scores[3],
+            wer = we/wl,
+            mean_wer = scores[4]/scores[5],
+            swer = swe/swl,
+            mean_swer = scores[6]/scores[7],
             _time = eval_start
         )
 
@@ -190,7 +190,7 @@ def main(args, loop=None):
     print(f"# of data : {len(dataset)}")
     print('Batch size :',config['batch_size'])
    
-    scores = torch.tensor([0.,0.,0.,0.,0.]) # num, ger, cer, wer, swer
+    scores = torch.tensor([0.,0., 0.,0., 0.,0., 0.,0.]) # ge, gl, ce, cl, we, wl, swe, swl
     scores.share_memory_()
     
     # define a model
@@ -218,17 +218,35 @@ def main(args, loop=None):
     # move the model to GPU
     model.to(DEVICE)
 
-    infer(config, model, vocab, dataset, scores, DEVICE)
+    if config['num_mp'] > 1:
+        # Create a list of mp.Process instances
+        processes = []
+        num_processes = config['num_mp']
+        dataset_size = len(dataset)
+        
+        for idx in range(num_processes):
+            start_idx = idx
+            subset_dataset = [dataset[i] for i in range(start_idx, None, num_processes)]
+            
+            process = mp.Process(target=infer, args=(config, model, vocab, subset_dataset, scores, DEVICE))
+            process.start()
+            processes.append(process)
+            
+        # Wait for all processes to finish
+        for process in processes:
+            process.join()
+    else:
+        infer(config, model, vocab, dataset, scores, DEVICE)
 
     print()
     print()
     print("Warning : This Results Do Represent Only the Estimation of Error Rates.")
     print("          Re-calculation of Error Rates Should be Done, by Considering the Lengths of Sequence")
     print(f"[Results]")
-    print(f"Grapheme Error Rate  : {100*scores[1]/scores[0]:.2f}%")
-    print(f"Character Error Rate : {100*scores[2]/scores[0]:.2f}%")
-    print(f"Word Error Rate      : {100*scores[3]/scores[0]:.2f}%")
-    print(f"sWord Error Rate     : {100*scores[4]/scores[0]:.2f}%")
+    print(f"Grapheme Error Rate  : {100*scores[0]/scores[1]:.2f}%")
+    print(f"Character Error Rate : {100*scores[2]/scores[3]:.2f}%")
+    print(f"Word Error Rate      : {100*scores[4]/scores[5]:.2f}%")
+    print(f"sWord Error Rate     : {100*scores[6]/scores[7]:.2f}%")
     
     with open('results/inference_log/'+config['log_path']+'.txt', 'a') as f:
         import datetime
@@ -237,10 +255,10 @@ def main(args, loop=None):
         Evalation Results of {config['model_path']} for {config['transcripts_path_test']}.
         Search method : {config['search_method']}, CTC_rate : {config['ctc_rate']}
         Beam size : {config['beam_size']}
-        Grapheme Error Rate  : {100*scores[1]/scores[0]:.2f}%
-        Character Error Rate : {100*scores[2]/scores[0]:.2f}%
-        Word Error Rate      : {100*scores[3]/scores[0]:.2f}%
-        sWord Error Rate     : {100*scores[4]/scores[0]:.2f}%
+        Grapheme Error Rate  : {100*scores[0]/scores[1]:.2f}%
+        Character Error Rate : {100*scores[2]/scores[3]:.2f}%
+        Word Error Rate      : {100*scores[4]/scores[5]:.2f}%
+        sWord Error Rate     : {100*scores[6]/scores[7]:.2f}%
         """)
 
 
