@@ -4,7 +4,7 @@ import argparse
 
 import torch
 import torch.multiprocessing as mp
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Sampler
 
 from avsr.utils.getter import get_metric, select_search
 from avsr.utils.model_builder import build_model
@@ -14,6 +14,17 @@ from dataset.dataset import *
 mp = mp.get_context('spawn')
 
 
+
+class SubsetSampler(Sampler):
+    def __init__(self, indices):
+        self.indices = indices
+
+    def __iter__(self):
+        return iter(self.indices)
+
+    def __len__(self):
+        return len(self.indices)
+    
 def show_description(it, total_it, ger, mean_ger, cer, mean_cer, wer, mean_wer, swer, mean_swer, _time):
     train_time = int(time.time() - _time)
     _sec = train_time % 60
@@ -69,9 +80,11 @@ def single_infer(config, vocab, search, metrics, audio_transform, tr_video_paths
     
     return errorRates
 
-def infer(config, model, vocab, dataset, scores, device='cpu'):
+def infer(config, model, vocab, dataset, scores, sampler=None, device='cpu'):
      # Assertion
     assert config['num_mp'] <= len(dataset), "num_mp should be equal or smaller than size of dataset!!"
+
+    model = model.to(device)
 
     # define a criterion
     metric_ger = get_metric(vocab, config['script_path'], unit=config['tokenize_unit'], error_type='ger')
@@ -107,6 +120,7 @@ def infer(config, model, vocab, dataset, scores, device='cpu'):
             infer = True), 
         shuffle = False,
         num_workers=config['num_workers'],
+        sampler=sampler
     )
 
     for it, (vids, seqs, targets, vid_lengths, seq_lengths, target_lengths, paths) in enumerate(dataloader):
@@ -136,7 +150,7 @@ def infer(config, model, vocab, dataset, scores, device='cpu'):
                                      output_lengths=output_lengths, target_lengths=target_lengths, 
                                      file_path=file_indices))
         
-        ge, gl, ce, cl, we, wl, swe, swl = errorRates
+        (ge, gl), (ce, cl), (we, wl), (swe, swl) = errorRates
         scores += torch.tensor([ge, gl, ce, cl, we, wl, swe, swl])
         
         
@@ -215,8 +229,8 @@ def main(args, loop=None):
     )
     # load state dict
     load_checkpoint(model, checkpoint_path=config['model_path'], device=DEVICE)
-    # move the model to GPU
-    model.to(DEVICE)
+    # move the model to CPU, then move it to DEVICE in `infer` function.
+    model.to('cpu')
 
     if config['num_mp'] > 1:
         # Create a list of mp.Process instances
@@ -226,9 +240,10 @@ def main(args, loop=None):
         
         for idx in range(num_processes):
             start_idx = idx
-            subset_dataset = [dataset[i] for i in range(start_idx, None, num_processes)]
+            subset_indices = list(range(start_idx, dataset_size, num_processes))
+            subset_sampler = SubsetSampler(subset_indices)
             
-            process = mp.Process(target=infer, args=(config, model, vocab, subset_dataset, scores, DEVICE))
+            process = mp.Process(target=infer, args=(config, model, vocab, dataset, scores, subset_sampler, DEVICE))
             process.start()
             processes.append(process)
             
@@ -236,7 +251,7 @@ def main(args, loop=None):
         for process in processes:
             process.join()
     else:
-        infer(config, model, vocab, dataset, scores, DEVICE)
+        infer(config, model, vocab, dataset, scores, device=DEVICE)
 
     print()
     print()

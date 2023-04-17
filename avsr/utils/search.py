@@ -119,24 +119,8 @@ class SearchSequence:
                                 audio_inputs, audio_input_lengths)
         features = self.model.medium(features)
         
-        if mp_num > 1:
-            _batch_size = batch_size // mp_num
-            processes = list()
-            for i in range(mp_num):
-                process = mp.Process(
-                    target = self._search,
-                    args = (features[i*_batch_size:(i+1)*_batch_size], beam_size, D_end, M_end, device, i, _batch_size, shared_outputs),
-                )
-                process.start()
-                processes.append(process)
-            
-            for process in processes:
-                process.join()
-        else:
-            self._search(
-                features, beam_size, D_end, M_end, device, 0, batch_size, shared_outputs,
-            )
-
+        self._search(features, beam_size, D_end, M_end, device, 0, batch_size, shared_outputs)
+        
     def _search(
         self,
         features = None,
