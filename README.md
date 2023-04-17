@@ -1,7 +1,7 @@
 # OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset
 ---
 
-This repository contains code scripts for training and evaluation of the OLKAVS dataset described in the paper [OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset](www.github.com).
+This repository contains code scripts for training and evaluation of the OLKAVS dataset described in the paper [OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset](https://arxiv.org/abs/2301.06375).
 
 
   * [Datasets](#datasets)
@@ -11,10 +11,11 @@ This repository contains code scripts for training and evaluation of the OLKAVS 
 
 ## Datasets
 
-|<img src="./assets/sample_0.gif" width="512px" title="Sample_0"/>|<img src="./assets/sample_1.gif" width="512px" title="Sample_1"/>|
-| :--: | :--: |
-| **Sample #1 : {A,B,D,F,H}**<br>"그때 되게 한여름이어서 되게 뜨거웠거든요." | **Sample #2 : {A,C,E,G,I}**<br>"그래서 도서관엘 다시 들어갔어요 공부하기 위해서" |
-<!-- ![Sample_0](./assets/sample_0.gif) -->
+|<img src="./assets/sample_0.gif" width="512px" title="Sample_0"/>|
+| :--: |
+| **Sample #1 : {A,B,D,F,H}**<br>"그때 되게 한여름이어서 되게 뜨거웠거든요." |
+|<img src="./assets/sample_1.gif" width="512px" title="Sample_1"/>|
+|**Sample #2 : {A,C,E,G,I}**<br>"그래서 도서관엘 다시 들어갔어요 공부하기 위해서" |
 
 The OLKAVS contains below.
 
@@ -127,9 +128,9 @@ pip install -r requirements.txt
 ## Pre-process
 
 Preprocess the data. 
-Crop the lengths of audio and video by the temporal label. (start, end)
-Then crop the video to the shape (96$\times$96), by bounding box.
-Finally generate label scripts for training or evaluation.
+Crop the lengths of audio and video by the temporal label. (start, end) \
+Then crop the video to the shape (96 96), by bounding box. \
+Finally generate label scripts for training or evaluation. 
 
 **Preparation**
 
@@ -151,11 +152,9 @@ python preprocess.py --root_dir {ROOT_DIR} --src_dir {SOURCE_DIR} --label_dir {L
 ```
 
 ## Extract Lip Feature (Optional)
-To reduce the required memory resource, this script extracts lip features in advance.
+To reduce the required memory resource, we extracted lip features by pre-trained model from [here](https://github.com/afourast/deep_lip_reading).
 
-```
-Being in the works...
-```
+We used its visual front-end, the details of using pre-trained model are in the [paper](https://arxiv.org/abs/2301.06375).
 
 ## Evaluation
 ### Inference
@@ -170,8 +169,9 @@ python inference.py -c {CONFIG_FILE_PATH}
 | `AV-model`    |     62M*    |    None    |  5.64 | 12.05 |  9.45 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
 | `A-model`     |     38M*    |    None    |  5.63 | 11.61 |  9.37 |                     |
 | `V-model`     |     34M*    |    None    | 36.53 | 49.97 | 51.71 |                     |
-| `F-model`     |     45M     |    None    | 55.00 | -     |     - |                     |
-| `All-model`   |     45M     |    None    | 44.86 | -     |     - |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
+| `F-model`     |     45M     |    None    | 55.00 | 71.60 | 72.64 |                     |
+| `All-model`   |     45M     |    None    | 44.86 | 60.08 | 60.67 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
+
 (* Do not include [pre-trained visual front-end](#extract-lip-feature-optional) parameters.)
 
 
