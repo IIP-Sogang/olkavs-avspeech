@@ -151,21 +151,21 @@ def infer(config, model, vocab, dataset, scores, sampler=None, device='cpu'):
                                      file_path=file_indices))
         
         (ge, gl), (ce, cl), (we, wl), (swe, swl) = errorRates
-        scores += torch.tensor([ge, gl, ce, cl, we, wl, swe, swl])
+        scores += torch.tensor([1, ge, gl, ce, cl, we, wl, swe, swl])
         
         
         # show description
         show_description(
             it = int(scores[0].item()),
-            total_it = len(dataloader),
+            total_it = len(dataloader) * config['num_mp'],
             ger = ge/gl,
-            mean_ger = scores[0]/scores[1],
+            mean_ger = scores[1]/scores[2],
             cer = ce/cl,
-            mean_cer = scores[2]/scores[3],
+            mean_cer = scores[3]/scores[4],
             wer = we/wl,
-            mean_wer = scores[4]/scores[5],
+            mean_wer = scores[5]/scores[6],
             swer = swe/swl,
-            mean_swer = scores[6]/scores[7],
+            mean_swer = scores[7]/scores[8],
             _time = eval_start
         )
 
@@ -204,7 +204,7 @@ def main(args, loop=None):
     print(f"# of data : {len(dataset)}")
     print('Batch size :',config['batch_size'])
    
-    scores = torch.tensor([0.,0., 0.,0., 0.,0., 0.,0.]) # ge, gl, ce, cl, we, wl, swe, swl
+    scores = torch.tensor([0., 0.,0., 0.,0., 0.,0., 0.,0.]) # it, ge, gl, ce, cl, we, wl, swe, swl
     scores.share_memory_()
     
     # define a model
@@ -255,25 +255,25 @@ def main(args, loop=None):
 
     print()
     print()
-    print("Warning : This Results Do Represent Only the Estimation of Error Rates.")
-    print("          Re-calculation of Error Rates Should be Done, by Considering the Lengths of Sequence")
     print(f"[Results]")
-    print(f"Grapheme Error Rate  : {100*scores[0]/scores[1]:.2f}%")
-    print(f"Character Error Rate : {100*scores[2]/scores[3]:.2f}%")
-    print(f"Word Error Rate      : {100*scores[4]/scores[5]:.2f}%")
-    print(f"sWord Error Rate     : {100*scores[6]/scores[7]:.2f}%")
+    print(f"Grapheme Error Rate  : {100*scores[1]/scores[2]:.2f}%")
+    print(f"Character Error Rate : {100*scores[3]/scores[4]:.2f}%")
+    print(f"Word Error Rate      : {100*scores[5]/scores[6]:.2f}%")
+    print(f"sWord Error Rate     : {100*scores[7]/scores[8]:.2f}%")
     
-    with open('results/inference_log/'+config['log_path']+'.txt', 'a') as f:
+    if not os.path.exists('results/metric_log/'):
+        os.makedirs('results/metric_log/')
+    with open('results/metric_log/'+config['log_path']+'.txt', 'a') as f:
         import datetime
         f.write(f"""
         {datetime.datetime.today()}
         Evalation Results of {config['model_path']} for {config['transcripts_path_test']}.
         Search method : {config['search_method']}, CTC_rate : {config['ctc_rate']}
         Beam size : {config['beam_size']}
-        Grapheme Error Rate  : {100*scores[0]/scores[1]:.2f}%
-        Character Error Rate : {100*scores[2]/scores[3]:.2f}%
-        Word Error Rate      : {100*scores[4]/scores[5]:.2f}%
-        sWord Error Rate     : {100*scores[6]/scores[7]:.2f}%
+        Grapheme Error Rate  : {100*scores[1]/scores[2]:.2f}%
+        Character Error Rate : {100*scores[3]/scores[4]:.2f}%
+        Word Error Rate      : {100*scores[5]/scores[6]:.2f}%
+        sWord Error Rate     : {100*scores[7]/scores[8]:.2f}%
         """)
 
 
