@@ -29,6 +29,7 @@ class Metric:
             self.metric = CharacterErrorRate(
                 vocab,
                 log_path = None,
+                convert=False
             )
             
     def reset(self):
@@ -39,7 +40,7 @@ class Metric:
         if output_lengths is not None:
             y_hats = [output[:output_lengths[i].item()] for i, output in enumerate(y_hats)]
         if target_lengths is not None:
-            targets = [target[:target_lengths[i].item()] for i, target in enumerate(targets)]
+            targets = [target[:target_lengths[i].item() - 1] for i, target in enumerate(targets)] # Minus the <end> token.
         return self.metric(targets, y_hats, show=show, file_path=file_path)
     
 
@@ -104,7 +105,7 @@ class ErrorRate(object):
                     else:
                         f.write(f'==========\n')
             
-            if self.unit=='grapheme':
+            if self.unit=='grapheme' and getattr(self, 'convert', True):
                 s1 = grp2char(s1)
                 s2 = grp2char(s2)
             dist, length = self.metric(s1, s2)
@@ -119,8 +120,9 @@ class ErrorRate(object):
 
 class CharacterErrorRate(ErrorRate):
     
-    def __init__(self, vocab, log_path:str = None, unit:str='grapheme'):
+    def __init__(self, vocab, log_path:str = None, unit:str='grapheme', convert:bool=True):
         super(CharacterErrorRate, self).__init__(vocab, log_path, unit)
+        self.convert = convert
 
     def metric(self, s1: str, s2: str):
         # if '_' in sentence, means subword-unit, delete '_'
@@ -130,8 +132,10 @@ class CharacterErrorRate(ErrorRate):
         if '_' in s2:
             s2 = s2.replace('_', '')
 
+        s1 = s1.strip()
+        s2 = s2.strip()
         dist = Lev.distance(s2, s1)
-        length = len(s1.replace(' ', ''))
+        length = len(s1)
 
         return dist, length
 

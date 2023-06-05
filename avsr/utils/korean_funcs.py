@@ -133,7 +133,8 @@ def grp2char(sentence):
             if chr_count >= 2:
                 result.append(id2KR[chr_id])
             
-    result = ''.join(result)
+    result:str = ''.join(result)
+    result = result.strip()
     return result
 
 

@@ -154,15 +154,20 @@ class SearchSequence:
         # search...
         for length in range(1, self.max_len):
             active = np.arange(batch_size)[~skip]
-            hypo_sub, beam = self._beam_search(
-                features[active],
-                [hypo_l[i] for i in active],
-                length,
-                batch_size - skip.sum(),#batch_size,
-                beam_size,
-                ctc_output[active],
-                device
-            )
+
+            # 만약 마지막 token이면 (length == self.max_len - 1), 끝에 eos가 붙도록 수정필요.
+            if False: # length==self.max_len - 1
+                pass
+            else:
+                hypo_sub, beam = self._beam_search(
+                    features[active],
+                    [hypo_l[i] for i in active],
+                    length,
+                    batch_size - skip.sum(),#batch_size,
+                    beam_size,
+                    ctc_output[active],
+                    device
+                )
             
             for i in active:
                 # Add complete hypothesis
@@ -253,7 +258,7 @@ class SearchSequence:
                     beam[i] = sorted(beam[i], key=lambda x: x[1], reverse=True) # Sort by score, descending
                     beam[i].pop(-1)
                     min_score[i] = beam[i][-1][1]
-
+        # import pdb;pdb.set_trace()
         return hypo_sub, beam
 
     def _init_ctc(
