@@ -174,8 +174,9 @@ def main(args, loop=None):
     
     # Check Devices
     print("cuda : ", torch.cuda.is_available())
-    print('Current cuda device:', torch.cuda.current_device())
-    print('Count of using GPUs:', torch.cuda.device_count())
+    if torch.cuda.is_available():
+        print('Current cuda device:', torch.cuda.current_device())
+        print('Count of using GPUs:', torch.cuda.device_count())
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     
     # Configuration

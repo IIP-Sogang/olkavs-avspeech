@@ -164,13 +164,13 @@ python inference.py -c {CONFIG_FILE_PATH}
 ```
 
 ### Results
-| Model         | # of params |  TrainData | CER | WER | sWER | pt |
-| ------------- | :---------: | :--------: | :-: | :-: | :--: | -- |
-| `AV-model`    |     62M*    |    None    |  5.64 | 12.05 |  9.45 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
-| `A-model`     |     38M*    |    None    |  5.63 | 11.61 |  9.37 |                     |
-| `V-model`     |     34M*    |    None    | 36.53 | 49.97 | 51.71 |                     |
-| `F-model`     |     45M     |    None    | 55.00 | 71.60 | 72.64 |                     |
-| `All-model`   |     45M     |    None    | 44.86 | 60.08 | 60.67 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
+| Model         | # of params | Eval view     | Eval noise     |   CER |   WER |  sWER | pt |
+| ------------- | :---------: |   :-:         |   :-:         |   :-: |   :-: |  :--: | -- |
+| `AV-model`    |     62M*    |   View A      |   All      |  3.64 | 10.82 |  8.18 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
+| `A-model`     |     38M*    |   View A      |   All      |  3.57 | 10.61 |  8.11 |                     |
+| `V-model`     |     34M*    |   View A      |   All      | 26.64 | 47.89 | 50.00 |                     |
+| `F-model`     |     45M     |   View A  |   Clean      | 41.24 | 71.39 | 72.44 |                     |
+| `All-model`   |     45M     |   View A  |   Clean      | 32.16 | 57.35 | 58.00 |[here](https://drive.google.com/drive/folders/1sElJn4efJdMRabMqk7-p6L7_3Dii5bW8?usp=share_link)|
 
 (* Do not include [pre-trained visual front-end](#extract-lip-feature-optional) parameters.)
 
@@ -178,7 +178,10 @@ python inference.py -c {CONFIG_FILE_PATH}
 ## Release
 
 * v1.0.0
-  * baseline released
+  * release baseline
+* v1.0.1
+  * update result table
+  * ICASSP 2024 accepted
 
 ## License
 

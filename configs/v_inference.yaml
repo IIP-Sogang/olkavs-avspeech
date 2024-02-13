@@ -1,0 +1,56 @@
+## Inference configuration
+random_seed : 2207
+
+transcripts_path_test : "label.txt"
+model_path : './results/test/00000.pt'
+log_path : 'LOGS.txt'
+script_path : 'output_script.txt'
+
+wandb_resume_id : 
+
+num_workers : 2 # for DataLoader
+num_gpu : 1
+num_mp : 8 # if num_mp is 1, single process mode. Else, multi processing
+
+search_method : "hybrid" # hybrid/att/ctc
+EndDetect_D : -14 # related to increasement in score
+EndDetect_M : 16 # related to length
+beam_size : 1
+batch_size : 1
+
+tokenize_unit : "grapheme" # grapheme/character
+architecture: "video" # audio_visual/audio/video
+loss_fn: "hybrid" # hybrid/att/ctc, This option is used only for selecting the form of the model
+ctc_rate : 0.6
+
+max_len : 200
+
+use_video : True
+raw_video : True
+
+audio_transform_method : "raw" # raw/fbank 
+audio_sample_rate : 14400
+audio_n_channels : 2
+audio_n_mels : None
+audio_frame_length : None
+audio_frame_shift : None
+audio_normalize : True
+
+video_n_channels : 3
+
+#Encoder
+# front-end
+front_dim : 512
+# back-end
+encoder_n_layer : 12
+encoder_d_model: 256
+encoder_n_head: 8
+encoder_ff_dim: 2048
+encoder_dropout_p: 0.1
+
+#Decoder
+decoder_n_layer : 6
+decoder_d_model: 256
+decoder_n_head: 8
+decoder_ff_dim: 2048
+decoder_dropout_p: 0.1
