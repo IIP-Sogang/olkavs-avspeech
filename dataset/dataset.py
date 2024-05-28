@@ -18,9 +18,10 @@ from torch.utils.data import Dataset
 
 import numpy as np
 from numpy.lib.stride_tricks import as_strided
+import librosa
 
 from vocabulary.utils import Vocabulary
-from dataset.augment import SpecAugment, BabbleNoise, get_sample
+from dataset.augment import SpecAugment, BabbleNoise
 from dataset.feature import MelSpectrogram,MFCC,Spectrogram,FilterBank
 
 
@@ -129,7 +130,7 @@ def _parse_video(video_path, is_raw=False):
     return video
 
 def _parse_audio(signal, transform, normalize):
-    signal = signal.numpy().reshape(-1,)    
+    signal = signal.reshape(-1,)    
     feature = transform(signal)
     if normalize:
         feature -= feature.mean()
@@ -274,7 +275,7 @@ class AV_Dataset(Dataset):
         return output
     
     def parse_audio(self,audio_path: str, augment_method):
-        signal, _ = get_sample(audio_path,resample=self.audio_sample_rate)
+        signal, _ = librosa.load(audio_path, sr=self.audio_sample_rate)
         if augment_method in [self.NOISE_AUGMENT, self.BOTH_AUGMENT]:
             signal = self.noise_augment(signal, is_path=False)
         

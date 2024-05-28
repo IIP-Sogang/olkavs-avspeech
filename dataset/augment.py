@@ -19,6 +19,7 @@ elif platform.system() == 'Linux':
 import sys
 INT_INF = sys.maxsize # 2^63 - 1
 
+
 class SpecAugment(object):
     def __init__(self, freq_mask_para: int = 18, time_mask_num: int = 10, freq_mask_num: int = 2) :
         self.freq_mask_para = freq_mask_para
@@ -44,21 +45,6 @@ class SpecAugment(object):
             feature[:, f0: f0 + f] = 0
 
         return feature
-
-def _get_sample(path, resample=None):
-    effects = [["remix", "1"]]
-    if resample:
-        effects.extend(
-            [
-                ["lowpass", f"{resample // 2}"],
-                ["rate", f"{resample}"],
-            ]
-        )
-    return torchaudio.sox_effects.apply_effects_file(path, effects=effects, )
-
-def get_sample(path, resample=None):
-    sample = _get_sample(path, resample=resample)
-    return sample
 
 
 class BabbleNoise(object):
