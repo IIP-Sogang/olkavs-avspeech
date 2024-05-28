@@ -1,7 +1,7 @@
 # OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset
 ---
 
-This repository contains code scripts for training and evaluation of the OLKAVS dataset described in the paper [OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset](https://arxiv.org/abs/2301.06375).
+This repository contains code scripts for training and evaluation of the OLKAVS dataset described in the paper [OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset](https://ieeexplore.ieee.org/document/10446901).
 
 
   * [Datasets](#datasets)
@@ -192,14 +192,16 @@ The OLKAVS Scripts are released under MIT license.
 ## Citation
 
 ```
-@misc{park2023olkavs,
-    title={OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset},
-    author={Jeongkyun Park and Jung-Wook Hwang and Kwanghee Choi and Seung-Hyun Lee and Jun Hwan Ahn and Rae-Hong Park and Hyung-Min Park},
-    year={2023},
-    eprint={2301.06375},
-    archivePrefix={arXiv},
-    primaryClass={cs.MM}
-}
+@INPROCEEDINGS{10446901,
+  author={Park, Jeongkyun and Hwang, Jung-Wook and Choi, Kwanghee and Lee, Seung-Hyeon and Ahn, Jun Hwan and Park, Rae-Hong and Park, Hyung-Min},
+  booktitle={ICASSP 2024 - 2024 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, 
+  title={OLKAVS: An Open Large-Scale Korean Audio-Visual Speech Dataset}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={6385-6389},
+  keywords={Training;Lips;Mouth;Speech recognition;Signal processing;Predictive models;Speaker recognition;Audio-visual speech datasets;multi-view datasets;lip reading;audio-visual speech recognition;eep learning},
+  doi={10.1109/ICASSP48485.2024.10446901}}
 ```
 
 ## Contacts
